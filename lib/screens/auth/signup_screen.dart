@@ -1,16 +1,57 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
+import 'package:device_activity_web/models/user_model.dart';
+import 'package:device_activity_web/screens/auth/signin_screen.dart';
+import 'package:device_activity_web/screens/home_screen.dart';
+import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:device_activity_web/widgets/custom_button.dart';
 import 'package:device_activity_web/widgets/text_widget.dart';
 import 'package:device_activity_web/widgets/wsized.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/cutom_image.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  signUpFunction(context, name, email, password) async {
+    Provider.of<RootProvider>(context, listen: false).showLicenceCode = true;
+
+    UserModel usr = UserModel();
+
+    usr.name = name;
+    usr.email = email;
+    usr.password = password;
+
+    var res = await Provider.of<RootProvider>(
+      context,
+      listen: false,
+    ).signUpWithEmailAndPassword(
+      context,
+      usr,
+    );
+    if (res) {
+      Navigator.pushReplacementNamed(
+        context,
+        "/home",
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +93,12 @@ class SignUpScreen extends StatelessWidget {
                               ),
                               GestureDetector(
                                 onTap: () =>
+                                    //  Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => SignInScreen(),
+                                    //   ),
+                                    // ),
                                     Navigator.pushNamed(context, "/signin"),
                                 child: TextWidget(
                                   text: 'Login',
@@ -66,6 +113,7 @@ class SignUpScreen extends StatelessWidget {
                           Row(
                             children: [
                               CustomTextField(
+                                  controller: _firstNameController,
                                   borderradius: 20,
                                   widh: 0.15,
                                   bordercolor: Colors.grey.shade200,
@@ -79,6 +127,7 @@ class SignUpScreen extends StatelessWidget {
                                   obscureText: false),
                               WSizedBox(wval: 0.02, hval: 0),
                               CustomTextField(
+                                  controller: _lastNameController,
                                   borderradius: 20,
                                   widh: 0.15,
                                   bordercolor: Colors.grey.shade200,
@@ -94,6 +143,7 @@ class SignUpScreen extends StatelessWidget {
                           ),
                           WSizedBox(wval: 0, hval: 0.02),
                           CustomTextField(
+                              controller: _emailController,
                               borderradius: 20,
                               bordercolor: Colors.grey.shade200,
                               widh: 0.32,
@@ -107,6 +157,7 @@ class SignUpScreen extends StatelessWidget {
                               obscureText: false),
                           WSizedBox(wval: 0, hval: 0.02),
                           CustomTextField(
+                              controller: _passwordController,
                               borderradius: 20,
                               bordercolor: Colors.grey.shade200,
                               widh: 0.32,
@@ -129,9 +180,12 @@ class SignUpScreen extends StatelessWidget {
                             fontweight: FontWeight.bold,
                             fontcolor: Colors.white,
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
+                              signUpFunction(
                                 context,
-                                "/home",
+                                _firstNameController.text +
+                                    _lastNameController.text,
+                                _emailController.text,
+                                _passwordController.text,
                               );
                             },
                           ),

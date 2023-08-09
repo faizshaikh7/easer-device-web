@@ -4,11 +4,23 @@ import 'package:device_activity_web/screens/auth/signin_screen.dart';
 import 'package:device_activity_web/screens/auth/signup_screen.dart';
 import 'package:device_activity_web/screens/details_screen.dart';
 import 'package:device_activity_web/screens/home_screen.dart';
+import 'package:device_activity_web/services/providers/root_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'responsive/app_layout.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAg8rIF_XYMGmiM2Xo9SY-RCUbGyaKkK0o",
+      appId: "1:863661298593:web:50ea9817354c2ffddff1e0",
+      messagingSenderId: "863661298593",
+      projectId: "easer-device-521",
+    ),
+  );
   runApp(const MyApp());
 }
 
@@ -18,23 +30,32 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'System Settings',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => RootProvider(),
+        )
+      ],
+      child: MaterialApp(
+        title: 'System Settings',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+
+        // home: const SignInScreen(),
+        // home: const ResponsiveLayout(
+        //     appLayout: AppLayout(), webLayout: WebLayout()),
+        initialRoute: "/signin",
+        routes: {
+          // "/": (context) => const HomeScreen(),
+          "/home": (context) => const HomeScreen(),
+          "/signup": (context) => const SignUpScreen(),
+          "/signin": (context) => const SignInScreen(),
+          "/details": (context) => const DetailsScreen(),
+        },
       ),
-      debugShowCheckedModeBanner: false,
-      // home: const HomeScreen(),
-      home: const ResponsiveLayout(
-          appLayout: AppLayout(), webLayout: WebLayout()),
-      initialRoute: "/signup",
-      routes: {
-        "/home": (context) => const HomeScreen(),
-        "/signup": (context) => const SignUpScreen(),
-        "/signin": (context) => const SignInScreen(),
-        "/details": (context) => const DetailsScreen(),
-      },
     );
   }
 }

@@ -1,15 +1,54 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:device_activity_web/screens/auth/signup_screen.dart';
+import 'package:device_activity_web/screens/home_screen.dart';
+import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/widgets/custom_button.dart';
 import 'package:device_activity_web/widgets/text_widget.dart';
 import 'package:device_activity_web/widgets/wsized.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/user_model.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/cutom_image.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  signInFunction(
+    BuildContext context,
+    String email,
+    String password,
+  ) async {
+    UserModel usr = UserModel();
+
+    usr.email = email;
+    usr.password = password;
+
+    var res = await Provider.of<RootProvider>(
+      context,
+      listen: false,
+    ).signInWithEmailAndPassword(
+      context,
+      usr,
+    );
+
+    if (res) {
+      Navigator.pushReplacementNamed(
+        context,
+        "/home",
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,23 +85,29 @@ class SignInScreen extends StatelessWidget {
                                 textsize: 18,
                                 fontWeight: FontWeight.normal,
                               ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              GestureDetector(
-                                onTap: () =>
+                              TextButton(
+                                // onPressed: () => Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => SignUpScreen(),
+                                //   ),
+                                // ),
+                                onPressed: () =>
                                     Navigator.pushNamed(context, "/signup"),
-                                child: TextWidget(
-                                  text: ' Sign up',
-                                  textcolor: Colors.deepPurpleAccent,
-                                  textsize: 18,
-                                  fontWeight: FontWeight.bold,
+                                child: Text(
+                                  ' Sign up',
+                                  style: TextStyle(
+                                    color: Colors.deepPurpleAccent,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                           WSizedBox(wval: 0, hval: 0.03),
                           CustomTextField(
+                              controller: _emailController,
                               borderradius: 20,
                               bordercolor: Colors.grey.shade200,
                               widh: 0.32,
@@ -76,6 +121,7 @@ class SignInScreen extends StatelessWidget {
                               obscureText: false),
                           WSizedBox(wval: 0, hval: 0.02),
                           CustomTextField(
+                              controller: _passwordController,
                               borderradius: 20,
                               bordercolor: Colors.grey.shade200,
                               widh: 0.32,
@@ -98,9 +144,10 @@ class SignInScreen extends StatelessWidget {
                             fontweight: FontWeight.bold,
                             fontcolor: Colors.white,
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
+                              signInFunction(
                                 context,
-                                "/home",
+                                _emailController.text,
+                                _passwordController.text,
                               );
                             },
                           ),
