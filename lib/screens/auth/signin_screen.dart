@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
-import 'package:device_activity_web/screens/auth/signup_screen.dart';
-import 'package:device_activity_web/screens/home_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/widgets/custom_button.dart';
 import 'package:device_activity_web/widgets/text_widget.dart';
@@ -29,17 +27,13 @@ class _SignInScreenState extends State<SignInScreen> {
     String email,
     String password,
   ) async {
-    UserModel usr = UserModel();
-
-    usr.email = email;
-    usr.password = password;
-
     var res = await Provider.of<RootProvider>(
       context,
       listen: false,
     ).signInWithEmailAndPassword(
       context,
-      usr,
+      email,
+      password,
     );
 
     if (res) {

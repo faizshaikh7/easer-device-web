@@ -1,10 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:developer';
-
 import 'package:device_activity_web/models/user_model.dart';
-import 'package:device_activity_web/screens/auth/signin_screen.dart';
-import 'package:device_activity_web/screens/home_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     Provider.of<RootProvider>(context, listen: false).showLicenceCode = true;
 
     UserModel usr = UserModel();
-
+//
     usr.name = name;
     usr.email = email;
     usr.password = password;

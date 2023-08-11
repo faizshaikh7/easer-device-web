@@ -1,4 +1,7 @@
-import 'package:device_activity_web/screens/auth/signin_screen.dart';
+import 'dart:developer';
+
+import 'package:device_activity_web/models/device_info_model.dart';
+import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/colors.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
@@ -15,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
+  UserModel user = UserModel();
 
   @override
   void initState() {
@@ -30,6 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
         getAndSaveLicenceCode(context, usrProv);
       });
     }
+
+    usrProv.setupValues();
   }
 
   getAndSaveLicenceCode(context, RootProvider rootProv) {
@@ -37,19 +43,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return showDialog<bool>(
       context: context,
       builder: (_) {
-        return licenceCodeDialogBox(context);
+        return licenceCodeDialogBox(context, rootProv);
       },
     );
   }
 
-  licenceCodeDialogBox(context) {
+  licenceCodeDialogBox(context, RootProvider prov) {
     return AlertDialog(
-      title: const Text("Licence Code"),
+      title: Text("Licence Code is ${prov.userLicenceCode}"),
+      // title: Text("Licence Code is ${prov.userLicenceCode}"),
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-      content: const Text(
+      content: Text(
         textAlign: TextAlign.center,
-        'Your Licence Code is 8934, Use this Code to access App Functions',
-        style: TextStyle(color: Colors.black54, fontSize: 20),
+        'Your Licence Code is ${prov.userLicenceCode}, Use this Code to access App Functions',
+        style: const TextStyle(color: Colors.black54, fontSize: 20),
       ),
       actions: [
         TextButton(
@@ -69,18 +76,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  deviceDetailsDialogBox(BuildContext context) {
+  deviceDetailsDialogBox(BuildContext context, RootProvider prov, index) {
     var size = MediaQuery.of(context).size;
     return AlertDialog(
-      title: const Text(
-        "Samsung S23+ Ultra",
+      title: Text(
+        "${prov.deviceDataList?[index]['deviceMake']} ${prov.deviceDataList?[index]['deviceModel']}",
         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       content: SizedBox(
         height: size.height / 3.2,
         width: size.width / 3,
-        child: const Column(
+        child: Column(
           // mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,12 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "Samsung",
+                  "${prov.deviceDataList?[index]['deviceMake']}",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -106,26 +113,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "S23+ Ultra",
+                  "${prov.deviceDataList?[index]['deviceModel']}",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "Licence Code:",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "0839",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  "${prov.deviceDataList?[index]['licenceCode']}",
+
+                  // user.licenceCode ?? "dad",
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -134,12 +144,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "Active",
+                  "${prov.deviceDataList?[index]['deviceStatus']}",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -148,25 +158,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "Good",
+                  "${prov.deviceDataList?[index]['networkStatus']}",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
-            Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Joined Date:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "01/01/2001",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
+            // const Divider(),
+            // const Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       "Joined Date:",
+            //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            //     ),
+            //     Text(
+            //       "01/01/2001",
+            //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -190,7 +200,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var prov = Provider.of<RootProvider>(context);
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Easer System"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              prov.signout(context);
+            },
+            child: Text(
+              "Logout",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          )
+        ],
+      ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -205,27 +233,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 selectedIconColor: whiteColor,
                 decoration: const BoxDecoration(),
                 backgroundColor: Colors.grey.shade200),
-            footer: SideMenuItem(
-              onTap: (index, sideMenuController) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  "/signin",
-                  (route) => false,
-                );
-                // Navigator.pushAndRemoveUntil(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const SignInScreen(),
-                //   ),
-                //   (route) => false,
-                // );
-              },
-              title: 'Logout',
-              icon: const Icon(
-                Icons.logout,
-              ),
-            ),
-            alwaysShowFooter: true,
+            // footer: SideMenuItem(
+            //   onTap: (index, sideMenuController) {
+            //     prov.signout(context);
+            //   },
+            //   title: 'Logout',
+            //   icon: const Icon(
+            //     Icons.logout,
+            //   ),
+            // ),
+            // alwaysShowFooter: true,
             items: [
               SideMenuItem(
                 title: 'Dashboard',
@@ -256,107 +273,118 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: pageController,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  color: Colors.white,
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: ListTile(
-                            title: Row(
-                              children: [
-                                Image.network(
-                                  "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s911bzebins/gallery/in-galaxy-s23-s911-sm-s911bzebins-535265834?imwidth=480",
-                                  height: 150,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 15,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Samsung S23+ Ultra",
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      const IntrinsicHeight(
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "Active",
-                                              style: TextStyle(
-                                                  color: Colors.green),
-                                            ),
-                                            VerticalDivider(
-                                              thickness: 2,
-                                            ),
-                                            Text(
-                                              "Date: 01/01/2023",
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 25,
-                                      ),
-                                      Row(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    color: Colors.white,
+                    child: prov.deviceDataList != null
+                        ? ListView.builder(
+                            itemCount: prov.deviceDataList?.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: ListTile(
+                                      title: Row(
                                         children: [
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.red.shade400,
-                                            ),
-                                            onPressed: () {},
-                                            child: const Text(
-                                              "Reset",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
+                                          Image.network(
+                                            "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s911bzebins/gallery/in-galaxy-s23-s911-sm-s911bzebins-535265834?imwidth=480",
+                                            height: 150,
                                           ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              showDialog<bool>(
-                                                context: context,
-                                                builder: (_) {
-                                                  return deviceDetailsDialogBox(
-                                                      context);
-                                                },
-                                              );
-                                            },
-                                            child: const Text("Details"),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${prov.deviceDataList?[index]['deviceMake']} ${prov.deviceDataList?[index]['deviceModel']}",
+                                                  style: const TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                Text(
+                                                  "${prov.deviceDataList?[index]['deviceStatus']}",
+                                                  style: TextStyle(
+                                                      color: Colors.green),
+                                                ),
+                                                const SizedBox(
+                                                  height: 25,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.red.shade400,
+                                                      ),
+                                                      onPressed: () {
+                                                        var ur =
+                                                            user.licenceCode;
+
+                                                        log(ur ?? "da");
+                                                      },
+                                                      child: const Text(
+                                                        "Reset",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        log(index.toString());
+                                                        showDialog<bool>(
+                                                          context: context,
+                                                          builder: (_) {
+                                                            return deviceDetailsDialogBox(
+                                                                context,
+                                                                prov,
+                                                                index);
+                                                          },
+                                                        );
+                                                      },
+                                                      child:
+                                                          const Text("Details"),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           )
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.more_vert_rounded),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                                      // trailing: IconButton(
+                                      //   onPressed: () {},
+                                      //   icon:
+                                      //       const Icon(Icons.more_vert_rounded),
+                                      // ),
+                                    ),
+                                  ));
+                            },
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // CircularProgressIndicator(),
+                              // SizedBox(
+                              //   height: 10,
+                              // ),
+                              // Text("Loading...")
+                              Text("No Data Available")
+                            ],
+                          )),
                 Container(
                   color: Colors.white,
                   child: const Center(
