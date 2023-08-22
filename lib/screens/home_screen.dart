@@ -1,11 +1,14 @@
-import 'dart:developer';
+// ignore_for_file: use_build_context_synchronously
 
-import 'package:device_activity_web/models/device_info_model.dart';
+import 'dart:developer';
 import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/colors.dart';
+import 'package:device_activity_web/utils/database/database_method.dart';
+import 'package:device_activity_web/utils/dimensions.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,7 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
         getAndSaveLicenceCode(context, usrProv);
       });
     }
-
+    if (usrProv.userLicenceCode.isEmpty) {
+      Future.delayed(Duration.zero, () {
+        updateData();
+      });
+    }
     usrProv.setupValues();
   }
 
@@ -81,103 +88,112 @@ class _HomeScreenState extends State<HomeScreen> {
     return AlertDialog(
       title: Text(
         "${prov.deviceDataList?[index]['deviceMake']} ${prov.deviceDataList?[index]['deviceModel']}",
-        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       content: SizedBox(
         height: size.height / 3.2,
         width: size.width / 3,
-        child: Column(
-          // mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Make:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "${prov.deviceDataList?[index]['deviceMake']}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Model:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "${prov.deviceDataList?[index]['deviceModel']}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Licence Code:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "${prov.deviceDataList?[index]['licenceCode']}",
+        child: SingleChildScrollView(
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Make:",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    "${prov.deviceDataList?[index]['deviceMake']}",
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Model:",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    "${prov.deviceDataList?[index]['deviceModel']}",
+                    softWrap: false,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis, // new
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Licence Code:",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    "${prov.deviceDataList?[index]['licenceCode']}",
 
-                  // user.licenceCode ?? "dad",
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Device Status:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "${prov.deviceDataList?[index]['deviceStatus']}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Network Status:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "${prov.deviceDataList?[index]['networkStatus']}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            // const Divider(),
-            // const Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Text(
-            //       "Joined Date:",
-            //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-            //     ),
-            //     Text(
-            //       "01/01/2001",
-            //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-            //     ),
-            //   ],
-            // ),
-          ],
+                    // user.licenceCode ?? "dad",
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Device Status:",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    "${prov.deviceDataList?[index]['deviceStatus']}",
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Network Status:",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    "${prov.deviceDataList?[index]['networkStatus']}",
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              // const Divider(),
+              // const Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       "Joined Date:",
+              //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              //     ),
+              //     Text(
+              //       "01/01/2001",
+              //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              //     ),
+              //   ],
+              // ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -198,216 +214,218 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  updateData() async {
+    var prov = Provider.of<RootProvider>(context, listen: false);
+    var uid = auth.currentUser!.uid;
+    var data = await DatabaseMethods().getDataFromDB("users", uid);
+    print(data?['licenceCode']);
+    prov.userLicenceCode = data?['licenceCode'];
+    await prov.getDeviceDetails(context);
+    // print(prov.deviceDataList?[0]);
+    print(prov.deviceDataList);
+  }
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    // double height = MediaQuery.of(context).size.height;
+    bool isWebScreen = true;
+    if (width <= webScreenSize) {
+      setState(() {
+        isWebScreen = false;
+      });
+    }
     var prov = Provider.of<RootProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Easer System"),
+        automaticallyImplyLeading: false,
+        title: Text(
+          "Easer System",
+          style: GoogleFonts.antonio(
+            fontSize: 25,
+          ),
+        ),
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               prov.signout(context);
             },
             child: Text(
               "Logout",
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.red.shade900,
+              ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           )
         ],
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SideMenu(
-            controller: sideMenu,
-            style: SideMenuStyle(
-                // showTooltip: false,
-                displayMode: SideMenuDisplayMode.open,
-                hoverColor: Colors.deepPurple.shade50,
-                selectedColor: Colors.deepPurpleAccent,
-                selectedTitleTextStyle: const TextStyle(color: Colors.white),
-                selectedIconColor: whiteColor,
-                decoration: const BoxDecoration(),
-                backgroundColor: Colors.grey.shade200),
-            // footer: SideMenuItem(
-            //   onTap: (index, sideMenuController) {
-            //     prov.signout(context);
-            //   },
-            //   title: 'Logout',
-            //   icon: const Icon(
-            //     Icons.logout,
-            //   ),
-            // ),
-            // alwaysShowFooter: true,
-            items: [
-              SideMenuItem(
-                title: 'Dashboard',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(Icons.home),
-                tooltipContent: "Dashboard to show device info",
+      body: Container(
+          width: double.maxFinite,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
               ),
-              SideMenuItem(
-                title: 'Users',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(Icons.supervisor_account),
+              Text(
+                (prov.deviceDataList != null)
+                    ? "Availble Devices"
+                    : "No Device Available",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 30,
+                ),
               ),
-              SideMenuItem(
-                title: 'Settings',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(Icons.settings),
+              Text(
+                "Use this Auto-Generated Licence Code ${prov.userLicenceCode} to Login or Add Device",
+                style: GoogleFonts.raleway(
+                  fontSize: 18,
+                ),
               ),
-            ],
-          ),
-          Expanded(
-            child: PageView(
-              controller: pageController,
-              children: [
-                Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    color: Colors.white,
-                    child: prov.deviceDataList != null
-                        ? ListView.builder(
-                            itemCount: prov.deviceDataList?.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade300),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: ListTile(
-                                      title: Row(
-                                        children: [
-                                          Image.network(
-                                            "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s911bzebins/gallery/in-galaxy-s23-s911-sm-s911bzebins-535265834?imwidth=480",
-                                            height: 150,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 15,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "${prov.deviceDataList?[index]['deviceMake']} ${prov.deviceDataList?[index]['deviceModel']}",
-                                                  style: const TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                Text(
-                                                  "${prov.deviceDataList?[index]['deviceStatus']}",
-                                                  style: TextStyle(
-                                                      color: Colors.green),
-                                                ),
-                                                const SizedBox(
-                                                  height: 25,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            Colors.red.shade400,
-                                                      ),
-                                                      onPressed: () {
-                                                        var ur =
-                                                            user.licenceCode;
+              const SizedBox(
+                height: 15,
+              ),
+              prov.deviceDataList != null
+                  ? Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: prov.deviceDataList?.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: (prov.deviceDataList!.isNotEmpty)
+                                    ? ListTile(
+                                        title: Row(
+                                          children: [
+                                            (isWebScreen)
+                                                ? Image.network(
+                                                    "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s911bzebins/gallery/in-galaxy-s23-s911-sm-s911bzebins-535265834?imwidth=480",
+                                                    height: 150,
+                                                  )
+                                                : const SizedBox.shrink(),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                vertical: 15,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: (isWebScreen)
+                                                        ? width / 2.5
+                                                        : width * 0.70,
+                                                    child: Text(
+                                                      "${prov.deviceDataList?[index]['deviceMake']} ${prov.deviceDataList?[index]['deviceModel']}",
+                                                      softWrap: false,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                          fontSize: 22,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${prov.deviceDataList?[index]['deviceStatus']}",
+                                                    style: const TextStyle(
+                                                        color: Colors.green),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 25,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .red.shade400,
+                                                        ),
+                                                        onPressed: () {
+                                                          var deviceId =
+                                                              prov.deviceDataList?[
+                                                                      index]
+                                                                  ['deviceId'];
+                                                          var isReset = prov
+                                                                  .deviceDataList?[
+                                                              index]['isReset'];
 
-                                                        log(ur ?? "da");
-                                                      },
-                                                      child: const Text(
-                                                        "Reset",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
+                                                          print(isReset);
+                                                          log(deviceId);
+                                                          if (deviceId !=
+                                                                  null ||
+                                                              deviceId != "") {
+                                                            prov.updateDeviceData(
+                                                              deviceId,
+                                                              context,
+                                                              "${prov.deviceDataList?[index]['deviceMake']} ${prov.deviceDataList?[index]['deviceModel']}",
+                                                            );
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          "Reset",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        log(index.toString());
-                                                        showDialog<bool>(
-                                                          context: context,
-                                                          builder: (_) {
-                                                            return deviceDetailsDialogBox(
-                                                                context,
-                                                                prov,
-                                                                index);
-                                                          },
-                                                        );
-                                                      },
-                                                      child:
-                                                          const Text("Details"),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          log(index.toString());
+                                                          showDialog<bool>(
+                                                            context: context,
+                                                            builder: (_) {
+                                                              return deviceDetailsDialogBox(
+                                                                  context,
+                                                                  prov,
+                                                                  index);
+                                                            },
+                                                          );
+                                                        },
+                                                        child: const Text(
+                                                            "Details"),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        // trailing: IconButton(
+                                        //   onPressed: () {},
+                                        //   icon:
+                                        //       const Icon(Icons.more_vert_rounded),
+                                        // ),
+                                      )
+                                    : const Center(
+                                        child: Text("No Device Available.."),
                                       ),
-                                      // trailing: IconButton(
-                                      //   onPressed: () {},
-                                      //   icon:
-                                      //       const Icon(Icons.more_vert_rounded),
-                                      // ),
-                                    ),
-                                  ));
-                            },
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // CircularProgressIndicator(),
-                              // SizedBox(
-                              //   height: 10,
-                              // ),
-                              // Text("Loading...")
-                              Text("No Data Available")
-                            ],
-                          )),
-                Container(
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'Users',
-                      style: TextStyle(fontSize: 35),
+                              ));
+                        },
+                      ),
+                    )
+                  : const Center(
+                      child: Text("No Device Available! Add to Continue."),
                     ),
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'Settings',
-                      style: TextStyle(fontSize: 35),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+            ],
+          )),
     );
   }
 }

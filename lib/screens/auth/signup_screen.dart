@@ -2,6 +2,7 @@
 
 import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
+import 'package:device_activity_web/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:device_activity_web/widgets/custom_button.dart';
@@ -51,6 +52,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    // double height = MediaQuery.of(context).size.height;
+    bool isWebScreen = true;
+    if (width <= webScreenSize) {
+      setState(() {
+        isWebScreen = false;
+      });
+    }
     return Scaffold(
       body: Row(
         children: [
@@ -72,14 +81,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           TextWidget(
                             text: 'Create Account',
                             textcolor: Colors.black,
-                            textsize: 45,
+                            textsize: (isWebScreen) ? 45 : 30,
                             fontWeight: FontWeight.bold,
                           ),
-                          WSizedBox(wval: 0, hval: 0.03),
+                          // WSizedBox(wval: 0, hval: 0.03),
                           Row(
                             children: [
                               TextWidget(
-                                text: 'Already A member?',
+                                text: 'Already a member?',
                                 textcolor: Colors.grey,
                                 textsize: 18,
                                 fontWeight: FontWeight.normal,
@@ -87,20 +96,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               SizedBox(
                                 width: 5,
                               ),
-                              GestureDetector(
-                                onTap: () =>
-                                    //  Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => SignInScreen(),
-                                    //   ),
-                                    // ),
+                              TextButton(
+                                onPressed: () =>
                                     Navigator.pushNamed(context, "/signin"),
-                                child: TextWidget(
-                                  text: 'Login',
-                                  textcolor: Colors.deepPurpleAccent,
-                                  textsize: 18,
-                                  fontWeight: FontWeight.bold,
+                                child: Text(
+                                  ' Login',
+                                  style: TextStyle(
+                                    color: Colors.deepPurpleAccent,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -111,9 +116,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               CustomTextField(
                                   controller: _firstNameController,
                                   borderradius: 20,
-                                  widh: 0.15,
+                                  widh: isWebScreen ? 0.15 : 0.440,
+                                  height: isWebScreen ? 0.05 : 0.06,
                                   bordercolor: Colors.grey.shade200,
-                                  height: 0.05,
                                   icon: Icons.credit_card,
                                   textcolor: Colors.black,
                                   iconColor: Colors.grey,
@@ -125,9 +130,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               CustomTextField(
                                   controller: _lastNameController,
                                   borderradius: 20,
-                                  widh: 0.15,
+                                  widh: isWebScreen ? 0.15 : 0.440,
+                                  height: isWebScreen ? 0.05 : 0.06,
                                   bordercolor: Colors.grey.shade200,
-                                  height: 0.05,
                                   icon: Icons.credit_card,
                                   textcolor: Colors.black,
                                   iconColor: Colors.grey,
@@ -142,8 +147,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               controller: _emailController,
                               borderradius: 20,
                               bordercolor: Colors.grey.shade200,
-                              widh: 0.32,
-                              height: 0.05,
+                              widh: isWebScreen ? 0.32 : 0.90,
+                              height: isWebScreen ? 0.05 : 0.062,
                               icon: Icons.mail,
                               iconColor: Colors.grey,
                               textcolor: Colors.black,
@@ -156,8 +161,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               controller: _passwordController,
                               borderradius: 20,
                               bordercolor: Colors.grey.shade200,
-                              widh: 0.32,
-                              height: 0.05,
+                              widh: isWebScreen ? 0.32 : 0.90,
+                              height: isWebScreen ? 0.05 : 0.062,
                               icon: Icons.lock,
                               iconColor: Colors.grey,
                               textcolor: Colors.black,
@@ -168,8 +173,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           WSizedBox(wval: 0, hval: 0.04),
                           CustomButton(
                             buttontext: 'Create Account',
-                            width: 0.32,
-                            height: 0.05,
+                            width: isWebScreen ? 0.32 : 0.90,
+                            height: isWebScreen ? 0.05 : 0.06,
                             bordercolor: Colors.deepPurpleAccent.shade700,
                             borderradius: 25,
                             fontsize: 16,
@@ -193,13 +198,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
           ),
-          const CustomImageWidget(
-            height: 1,
-            width: 0.57,
-            // imgpath: 'assets/images/bg.png',
-            imgpathNet:
-                "https://images.unsplash.com/photo-1483354483454-4cd359948304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-          ),
+          (isWebScreen)
+              ? CustomImageWidget(
+                  height: 1,
+                  width: 0.57,
+                  // imgpath: 'assets/images/bg.png',
+                  imgpathNet:
+                      "https://images.unsplash.com/photo-1483354483454-4cd359948304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                )
+              : SizedBox.shrink()
         ],
       ),
     );

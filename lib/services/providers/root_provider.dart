@@ -29,15 +29,6 @@ class RootProvider extends ChangeNotifier {
 
     deviceDataList = querySnapshot.docs.map((doc) => doc.data()).toList();
     notifyListeners();
-
-    // List<DeviceInfoModel> orgs = [];
-    // for (var z in deviceDataList) {
-    //   log(deviceDataList[0]["deviceMake"]);
-    //   log(deviceDataList[1]["deviceMake"]);
-    //   orgs.add(DeviceInfoModel.fromJson(z));
-    // }
-    // log(deviceDataList.toString());
-    // return orgs;
   }
 
   Future<bool> signUpWithEmailAndPassword(
@@ -138,6 +129,7 @@ class RootProvider extends ChangeNotifier {
   }
 
   setupValues() {
+    // userLicenceCode = prefs?.getString("licenceCode") ?? "na";
     user.uid = prefs?.getString("uid") ?? "";
     user.email = prefs?.getString("email") ?? "";
     user.name = prefs?.getString("name") ?? "";
@@ -165,8 +157,29 @@ class RootProvider extends ChangeNotifier {
 
     log(user.licenceCode ?? "whow");
     log(user.name!);
-    notifyListeners();
     return true;
+  }
+
+  Future<void> updateDeviceData(deviceId, context, deviceName) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('devices')
+          .doc(deviceId)
+          .update({
+        'isReset': true,
+      }).then(
+        (value) {
+          print("User Updated");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Resetting $deviceName..."),
+            ),
+          );
+        },
+      ).catchError((error) => print("Failed to update user: $error"));
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   signout(context) async {
