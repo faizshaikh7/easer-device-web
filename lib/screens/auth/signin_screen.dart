@@ -93,10 +93,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.normal,
                               ),
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.pushNamed(context, "/signup"),
+                                onPressed: () {},
                                 child: Text(
-                                  ' Sign up',
+                                  'Contact Us',
                                   style: TextStyle(
                                     color: Colors.deepPurpleAccent,
                                     fontSize: 18,
@@ -135,6 +134,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               hintColor: Colors.grey,
                               fontsize: 15,
                               obscureText: true),
+
                           WSizedBox(wval: 0, hval: 0.04),
                           CustomButton(
                             buttontext: 'Login Account',

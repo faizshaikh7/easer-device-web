@@ -183,8 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onPressed: () {
                               signUpFunction(
                                 context,
-                                _firstNameController.text +
-                                    _lastNameController.text,
+                                "${_firstNameController.text} ${_lastNameController.text}",
                                 _emailController.text,
                                 _passwordController.text,
                               );

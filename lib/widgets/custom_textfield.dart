@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final Color? onlyborder;
   final double fontsize;
   final Color? textcolor;
+  final TextInputType? keyboardType;
   //final FontWeight fontweight;
   final bool obscureText;
 
@@ -32,6 +33,7 @@ class CustomTextField extends StatelessWidget {
     required this.fontsize,
     this.textcolor,
     required this.obscureText,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -48,11 +50,10 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(15),
-           suffixIcon: Icon(
+            suffixIcon: Icon(
               icon,
               color: iconColor,
-            ) ,
-            
+            ),
             hintText: hinttext,
             hintStyle: TextStyle(
               color: hintColor,
@@ -60,6 +61,7 @@ class CustomTextField extends StatelessWidget {
             ),
             border: InputBorder.none),
         obscureText: obscureText,
+        keyboardType: keyboardType,
         style: TextStyle(
           color: textcolor ?? hintColor,
         ),

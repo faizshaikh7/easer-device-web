@@ -1,5 +1,6 @@
 import 'package:device_activity_web/responsive/responsive_layout.dart';
 import 'package:device_activity_web/responsive/web_layout.dart';
+import 'package:device_activity_web/screens/admin_create_account_screen.dart';
 import 'package:device_activity_web/screens/auth/signin_screen.dart';
 import 'package:device_activity_web/screens/auth/signup_screen.dart';
 import 'package:device_activity_web/screens/details_screen.dart';
@@ -8,11 +9,14 @@ import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'responsive/app_layout.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  var prefs = await SharedPreferences.getInstance();
+
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: "AIzaSyAg8rIF_XYMGmiM2Xo9SY-RCUbGyaKkK0o",
@@ -21,7 +25,7 @@ void main() async {
       projectId: "easer-device-521",
     ),
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -54,6 +58,7 @@ class MyApp extends StatelessWidget {
           "/signup": (context) => const SignUpScreen(),
           "/signin": (context) => const SignInScreen(),
           "/details": (context) => const DetailsScreen(),
+          "/admin_screen": (context) => const AdminCreateAccountScreen(),
         },
       ),
     );

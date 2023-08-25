@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+enum Options { dashboard, password, logout, refresh }
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
   UserModel user = UserModel();
+  bool? testAdmin;
 
   @override
   void initState() {
@@ -225,6 +228,32 @@ class _HomeScreenState extends State<HomeScreen> {
     print(prov.deviceDataList);
   }
 
+  var _popupMenuItemIndex = 0;
+  var appBarHeight = AppBar().preferredSize.height;
+
+  PopupMenuItem _buildPopupMenuItem(
+    String title,
+    IconData iconData,
+    int position,
+  ) {
+    return PopupMenuItem(
+      value: position,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(
+            iconData,
+            color: Colors.black,
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+          Text(title),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -236,6 +265,28 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
     var prov = Provider.of<RootProvider>(context);
+
+    _onMenuItemSelected(int value) {
+      setState(() {
+        _popupMenuItemIndex = value;
+      });
+
+      if (value == Options.password.index) {
+        prov.resetPassword(email: auth.currentUser!.email!);
+      } else if (value == Options.dashboard.index) {
+        print("open admin dash");
+        Navigator.pushNamed(context, "/admin_screen");
+      } else if (value == Options.logout.index) {
+        prov.signout(context);
+      } else if (value == Options.refresh.index) {
+        log(prov.isSuperAdmin.toString());
+      } else {
+        return null;
+      }
+    }
+
+    testAdmin = true;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -246,19 +297,33 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          ElevatedButton(
-            onPressed: () {
-              prov.signout(context);
+          PopupMenuButton(
+            onSelected: (value) {
+              _onMenuItemSelected(value as int);
             },
-            child: Text(
-              "Logout",
-              style: TextStyle(
-                color: Colors.red.shade900,
+            offset: Offset(0.0, appBarHeight),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(8.0),
+                bottomRight: Radius.circular(8.0),
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
               ),
             ),
+            itemBuilder: (ctx) => [
+              prov.isSuperAdmin!
+                  ? _buildPopupMenuItem('Create Admin Account', Icons.dashboard,
+                      Options.dashboard.index)
+                  : _buildPopupMenuItem('Refresh Page', Icons.refresh_rounded,
+                      Options.refresh.index),
+              _buildPopupMenuItem(
+                  'Change Password', Icons.password, Options.password.index),
+              _buildPopupMenuItem(
+                  'Logout Account', Icons.exit_to_app, Options.logout.index),
+            ],
           ),
           const SizedBox(
-            width: 10,
+            width: 20,
           )
         ],
       ),
@@ -273,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 20,
               ),
               Text(
-                (prov.deviceDataList != null)
+                (prov.deviceDataList?.length != 0)
                     ? "Availble Devices"
                     : "No Device Available",
                 style: GoogleFonts.poppins(
@@ -282,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Text(
-                "Use this Auto-Generated Licence Code ${prov.userLicenceCode} to Login or Add Device",
+                "Use this Auto-Generated Licence Code ${prov.userLicenceCode} to Login or Add Device from Mobile App",
                 style: GoogleFonts.raleway(
                   fontSize: 18,
                 ),
