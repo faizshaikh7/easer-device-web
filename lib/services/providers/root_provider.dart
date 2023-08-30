@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'dart:math' as mt;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_activity_web/models/device_info_model.dart';
 import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/utils/database/database_method.dart';
 import 'package:device_activity_web/widgets/custom_widget.dart';

@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:js_interop';
 import 'dart:math' as mt;
 
 import 'package:device_activity_web/services/providers/root_provider.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/dimensions.dart';

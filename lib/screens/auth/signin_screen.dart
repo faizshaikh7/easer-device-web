@@ -2,7 +2,6 @@
 
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/dimensions.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:device_activity_web/widgets/custom_button.dart';
 import 'package:device_activity_web/widgets/text_widget.dart';
@@ -10,7 +9,6 @@ import 'package:device_activity_web/widgets/wsized.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/user_model.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/cutom_image.dart';
 

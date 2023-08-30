@@ -1,9 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'dart:developer';
 import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
-import 'package:device_activity_web/utils/colors.dart';
 import 'package:device_activity_web/utils/database/database_method.dart';
 import 'package:device_activity_web/utils/dimensions.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
