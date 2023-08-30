@@ -1,5 +1,5 @@
-import 'package:device_activity_web/responsive/responsive_layout.dart';
-import 'package:device_activity_web/responsive/web_layout.dart';
+// ignore_for_file: unused_local_variable
+
 import 'package:device_activity_web/screens/admin_create_account_screen.dart';
 import 'package:device_activity_web/screens/admin_dashboard_screen.dart';
 import 'package:device_activity_web/screens/auth/signin_screen.dart';
@@ -11,8 +11,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'responsive/app_layout.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
