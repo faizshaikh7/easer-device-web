@@ -1,6 +1,7 @@
 import 'package:device_activity_web/responsive/responsive_layout.dart';
 import 'package:device_activity_web/responsive/web_layout.dart';
 import 'package:device_activity_web/screens/admin_create_account_screen.dart';
+import 'package:device_activity_web/screens/admin_dashboard_screen.dart';
 import 'package:device_activity_web/screens/auth/signin_screen.dart';
 import 'package:device_activity_web/screens/auth/signup_screen.dart';
 import 'package:device_activity_web/screens/details_screen.dart';
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
           "/signin": (context) => const SignInScreen(),
           "/details": (context) => const DetailsScreen(),
           "/admin_screen": (context) => const AdminCreateAccountScreen(),
+          "/admin_dashboard": (context) => const AdminDashboardScreen(),
         },
       ),
     );

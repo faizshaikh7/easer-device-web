@@ -275,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
         prov.resetPassword(email: auth.currentUser!.email!);
       } else if (value == Options.dashboard.index) {
         print("open admin dash");
-        Navigator.pushNamed(context, "/admin_screen");
+        Navigator.pushNamed(context, "/admin_dashboard");
       } else if (value == Options.logout.index) {
         prov.signout(context);
       } else if (value == Options.refresh.index) {

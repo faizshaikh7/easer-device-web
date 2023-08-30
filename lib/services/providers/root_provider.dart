@@ -18,7 +18,9 @@ class RootProvider extends ChangeNotifier {
   String userUID = "";
   SharedPreferences? prefs;
   List? deviceDataList;
+  List? usersList;
   bool? isSuperAdmin = false;
+  int? regenLicenceCode;
 
   UserModel user = UserModel();
 // TODO check below Code
@@ -29,6 +31,17 @@ class RootProvider extends ChangeNotifier {
         .get();
 
     deviceDataList = querySnapshot.docs.map((doc) => doc.data()).toList();
+    notifyListeners();
+  }
+
+  Future<void> getAllUser(context) async {
+    print("djad");
+    var querySnapshot =
+        await FirebaseFirestore.instance.collection("users").get();
+
+    usersList = querySnapshot.docs.map((doc) => doc.data()).toList();
+    // print(usersList?[0]["email"]);
+    // log(usersList?[0]["email"]);
     notifyListeners();
   }
 
@@ -62,10 +75,6 @@ class RootProvider extends ChangeNotifier {
       log(u.password!);
       log(u.uid!);
       log(u.licenceCode!);
-
-      if (u.email == "admin@gmail.com") {
-        isSuperAdmin = true;
-      }
 
       // Prefs
       var prefs = await SharedPreferences.getInstance();
@@ -134,6 +143,38 @@ class RootProvider extends ChangeNotifier {
     return false;
   }
 
+  // UPDATE USER DATA
+  Future<bool> updateUserData(
+      context, userUID, regenCode, uName, uDeviceLimit) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUID)
+          .update(
+            (regenCode != null)
+                ? {
+                    "deviceLimit": uDeviceLimit,
+                    "licenceCode": regenCode.toString(),
+                    "name": uName,
+                  }
+                : {
+                    "deviceLimit": uDeviceLimit,
+                    "name": uName,
+                  },
+          )
+          .then((value) {
+        customWidgets.showToast("User Updated");
+        Navigator.pop(context);
+      }).catchError((error) {
+        print("Failed to update user: $error");
+      });
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
   setupValues() {
     // userLicenceCode = prefs?.getString("licenceCode") ?? "na";
     user.uid = prefs?.getString("uid") ?? "";
@@ -200,11 +241,12 @@ class RootProvider extends ChangeNotifier {
         .sendPasswordResetEmail(email: email)
         .then((value) => customWidgets
             .showToast("Request sent on ${auth.currentUser!.email}"))
-        .catchError((e) => print(e));
+        .catchError((e) => customWidgets.showToast("Request Failed: $e"));
   }
 
   signout(context) async {
     deviceDataList!.clear();
+    isSuperAdmin = false;
     prefs?.setBool("isSuperAdmin", false);
     await FirebaseAuth.instance.signOut().then(
           (value) => Navigator.pushNamedAndRemoveUntil(
