@@ -12,16 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RootProvider extends ChangeNotifier {
+  List? deviceDataList;
+  bool? isSuperAdmin = false;
+  SharedPreferences? prefs;
+  int? regenLicenceCode;
   bool showLicenceCode = false;
+  UserModel user = UserModel();
   String userLicenceCode = "";
   String userUID = "";
-  SharedPreferences? prefs;
-  List? deviceDataList;
   List? usersList;
-  bool? isSuperAdmin = false;
-  int? regenLicenceCode;
 
-  UserModel user = UserModel();
 // TODO check below Code
   Future<void> getDeviceDetails(context) async {
     var querySnapshot = await FirebaseFirestore.instance

@@ -21,10 +21,10 @@ class AdminCreateAccountScreen extends StatefulWidget {
 }
 
 class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _deviceLimitController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   signUpFunction(context, name, email, password, deviceLimit) async {

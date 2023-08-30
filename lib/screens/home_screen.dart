@@ -20,10 +20,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var appBarHeight = AppBar().preferredSize.height;
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
-  UserModel user = UserModel();
   bool? testAdmin;
+  UserModel user = UserModel();
+
+  var _popupMenuItemIndex = 0;
 
   @override
   void initState() {
@@ -226,9 +229,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // print(prov.deviceDataList?[0]);
     print(prov.deviceDataList);
   }
-
-  var _popupMenuItemIndex = 0;
-  var appBarHeight = AppBar().preferredSize.height;
 
   PopupMenuItem _buildPopupMenuItem(
     String title,

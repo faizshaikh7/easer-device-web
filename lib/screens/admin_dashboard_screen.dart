@@ -19,8 +19,9 @@ class AdminDashboardScreen extends StatefulWidget {
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   int srNo = 0;
-  final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _deviceLimitController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   void initState() {
