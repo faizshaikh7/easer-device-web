@@ -4,7 +4,6 @@ import 'package:device_activity_web/screens/admin_create_account_screen.dart';
 import 'package:device_activity_web/screens/admin_dashboard_screen.dart';
 import 'package:device_activity_web/screens/auth/signin_screen.dart';
 import 'package:device_activity_web/screens/auth/signup_screen.dart';
-import 'package:device_activity_web/screens/details_screen.dart';
 import 'package:device_activity_web/screens/home_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -56,7 +55,7 @@ class MyApp extends StatelessWidget {
           "/home": (context) => const HomeScreen(),
           "/signup": (context) => const SignUpScreen(),
           "/signin": (context) => const SignInScreen(),
-          "/details": (context) => const DetailsScreen(),
+          // "/admin_details": (context) => AdminDetailsScreen(),
           "/admin_screen": (context) => const AdminCreateAccountScreen(),
           "/admin_dashboard": (context) => const AdminDashboardScreen(),
         },

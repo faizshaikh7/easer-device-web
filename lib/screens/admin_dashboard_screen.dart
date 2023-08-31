@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:math' as mt;
 
+import 'package:device_activity_web/screens/admin_details_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/dimensions.dart';
 import 'package:device_activity_web/widgets/custom_textfield.dart';
@@ -148,7 +149,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   _nameController.text,
                   _deviceLimitController.text);
 
-              if (res) {}
+              if (res) {
+                // TODO Add Code Here
+              }
             } else {
               customWidgets.showToast("All Fields Required");
             }
@@ -196,204 +199,243 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           width: double.maxFinite,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                "All Users",
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 30,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: (prov.usersList == null)
-                    ? const Center(
-                        child: Text("Loading..."),
-                      )
-                    : Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade500),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10, right: 50),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Sr.No",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  // SizedBox(
-                                  //   width: MediaQuery.of(context).size.width *
-                                  //       0.01,
-                                  // ),
-                                  Container(
-                                    width: 100,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        textAlign: TextAlign.start,
-                                        "Name",
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 100,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        textAlign: TextAlign.start,
-                                        "Email",
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    "Licence Code",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Device Limit",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Action",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Divider(),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: prov.usersList!.length,
-                              itemBuilder: (context, index) {
-                                srNo = index + 1;
-                                return Column(
+                Text(
+                  "All Users",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 30,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: (prov.usersList == null)
+                      ? const Center(
+                          child: Text("Loading..."),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade500),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    ListTile(
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "#$srNo",
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 100,
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                textAlign: TextAlign.start,
-                                                "${prov.usersList?[index]['name']}",
-                                                style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 150,
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                textAlign: TextAlign.start,
-                                                "${prov.usersList?[index]['email']}",
-                                                style: GoogleFonts.poppins(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Text(
-                                            "${prov.usersList?[index]['licenceCode']}",
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Text(
-                                            "${prov.usersList?[index]['deviceLimit']}",
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  log(
-                                                    prov.usersList![index]
-                                                        ["name"],
-                                                  );
-                                                  showDialog<bool>(
-                                                    context: context,
-                                                    builder: (_) {
-                                                      return editUserDetails(
-                                                          _,
-                                                          isWebScreen,
-                                                          prov,
-                                                          index);
-                                                    },
-                                                  );
-                                                },
-                                                child: const Text("Edit"),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () {},
-                                                child: const Text("View"),
-                                              )
-                                            ],
-                                          )
-                                        ],
+                                    Text(
+                                      "Sr.No",
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    (index <
-                                            prov.usersList!.length -
-                                                1) // use list len here instead of static num
-                                        ? const Divider()
-                                        : const SizedBox.shrink()
+                                    // SizedBox(
+                                    //   width: MediaQuery.of(context).size.width *
+                                    //       0.01,
+                                    // ),
+                                    Container(
+                                      width: 100,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          textAlign: TextAlign.start,
+                                          "Name",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          textAlign: TextAlign.start,
+                                          "Email",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          textAlign: TextAlign.start,
+                                          "Licence Code",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          textAlign: TextAlign.start,
+                                          "Device Limit",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          textAlign: TextAlign.start,
+                                          "Action",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ],
-                                );
-                              },
-                            ),
-                          ],
+                                ),
+                              ),
+                              const Divider(),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: prov.usersList!.length,
+                                itemBuilder: (context, index) {
+                                  srNo = index + 1;
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "#$srNo",
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 100,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  textAlign: TextAlign.start,
+                                                  "${prov.usersList?[index]['name']}",
+                                                  style: GoogleFonts.poppins(
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 150,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  textAlign: TextAlign.start,
+                                                  "${prov.usersList?[index]['email']}",
+                                                  style: GoogleFonts.poppins(
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              "${prov.usersList?[index]['licenceCode']}",
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${prov.usersList?[index]['deviceLimit']}",
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    log(
+                                                      prov.usersList![index]
+                                                          ["name"],
+                                                    );
+                                                    showDialog<bool>(
+                                                      context: context,
+                                                      builder: (_) {
+                                                        return editUserDetails(
+                                                            _,
+                                                            isWebScreen,
+                                                            prov,
+                                                            index);
+                                                      },
+                                                    );
+                                                  },
+                                                  child: const Text("Edit"),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    log(prov.usersList?[index]
+                                                        ['uid']);
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AdminDetailsScreen(
+                                                          uid: prov.usersList?[
+                                                              index]['uid'],
+                                                          name: prov.usersList?[
+                                                              index]['name'],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: const Text("View"),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      (index <
+                                              prov.usersList!.length -
+                                                  1) // use list len here instead of static num
+                                          ? const Divider()
+                                          : const SizedBox.shrink()
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-              ),
-            ],
+                ),
+                const SizedBox(
+                  height: 20,
+                )
+              ],
+            ),
           )),
     );
   }

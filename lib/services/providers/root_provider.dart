@@ -13,23 +13,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class RootProvider extends ChangeNotifier {
   List? deviceDataList;
+  List? adminViewDeviceDataList;
   bool? isSuperAdmin = false;
   SharedPreferences? prefs;
   int? regenLicenceCode;
   bool showLicenceCode = false;
   UserModel user = UserModel();
   String userLicenceCode = "";
+  String adminViewUserLicenceCode = "";
   String userUID = "";
   List? usersList;
 
 // TODO check below Code
-  Future<void> getDeviceDetails(context) async {
+  Future<void> getDeviceDetails(context, {bool isAdminView = false}) async {
     var querySnapshot = await FirebaseFirestore.instance
         .collection("devices")
-        .where("licenceCode", isEqualTo: userLicenceCode)
+        .where("licenceCode",
+            isEqualTo:
+                (isAdminView) ? adminViewUserLicenceCode : userLicenceCode)
         .get();
 
-    deviceDataList = querySnapshot.docs.map((doc) => doc.data()).toList();
+    (isAdminView)
+        ? adminViewDeviceDataList =
+            querySnapshot.docs.map((doc) => doc.data()).toList()
+        : deviceDataList = querySnapshot.docs.map((doc) => doc.data()).toList();
+
     notifyListeners();
   }
 
@@ -95,6 +103,7 @@ class RootProvider extends ChangeNotifier {
       }).then((value) {
         log("successfully added");
         setupValues();
+        Navigator.pop(context);
 
         log(user.licenceCode ?? "");
         log(user.name!);
