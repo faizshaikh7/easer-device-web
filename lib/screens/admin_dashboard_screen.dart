@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:math' as mt;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_activity_web/screens/admin_create_account_screen.dart';
 import 'package:device_activity_web/screens/admin_details_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/database/database_method.dart';
@@ -29,6 +30,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   final TextEditingController _deviceLimitController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  List? _foundUsers = [];
 
   @override
   void dispose() {
@@ -41,7 +43,33 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Provider.of<RootProvider>(context, listen: false).getAllUser(context);
+    getAndFoundList();
+  }
+
+  Future<void> getAndFoundList() async {
+    var uProv = Provider.of<RootProvider>(context, listen: false);
+    await uProv.getAllUser(context);
+    _foundUsers = uProv.usersList;
+  }
+
+  void filterSearchResults(String enteredKeyword, BuildContext context) {
+    var prov = Provider.of<RootProvider>(context, listen: false);
+    List results = [];
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = prov.usersList!;
+    } else {
+      results = prov.usersList!
+          .where((user) =>
+              user["name"].toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
+      // we use the toLowerCase() method to make it case-insensitive
+    }
+
+    // Refresh the UI
+    setState(() {
+      _foundUsers = results;
+    });
   }
 
   editUserDetails(context, isWebScreen, RootProvider prov, index) {
@@ -163,8 +191,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   _deviceLimitController.text);
 
               if (res) {
-                Provider.of<RootProvider>(context, listen: false)
-                    .getAllUser(context);
+                var prov = Provider.of<RootProvider>(context, listen: false);
+                await prov.getAllUser(context);
+                _foundUsers = prov.usersList;
                 prov.regenLicenceCode = null;
                 _nameController.clear();
                 _deviceLimitController.clear();
@@ -196,7 +225,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Widget build(BuildContext context) {
     var prov = Provider.of<RootProvider>(context);
     double width = MediaQuery.of(context).size.width;
-    TextEditingController editingController = TextEditingController();
+    // TextEditingController editingController = TextEditingController();
     // getRealtimeUpdate();
 
     bool isWebScreen = true;
@@ -206,12 +235,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       });
     }
 
-    void filterSearchResults(String query) {
-      setState(() {
-        // items = prov.usersList.where((item) => item.toLowerCase().contains(query.toLowerCase()))
-        //     .toList();
-      });
-    }
+    // void filterSearchResults(String query) {
+    //   setState(() {
+    //     // items = prov.usersList.where((item) => item.toLowerCase().contains(query.toLowerCase()))
+    //     //     .toList();
+    //   });
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -224,11 +253,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               print("open admin dash");
-              Navigator.pushNamed(context, "/admin_screen");
+              var updateData = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminCreateAccountScreen(),
+                  ));
+
+              if (updateData) {
+                await prov.getAllUser(context);
+                _foundUsers = prov.usersList;
+              }
             },
-            child: const Text("Create Admin Account"),
+            child: isWebScreen
+                ? Text("Create Admin Account")
+                : Icon(Icons.person_add_alt),
           ),
           const SizedBox(
             width: 20,
@@ -257,37 +297,61 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: width / 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          onChanged: (value) {
-                            filterSearchResults(value);
-                          },
-                          controller: editingController,
-                          decoration: const InputDecoration(
-                            hintText: "Search",
-                            prefixIcon: Icon(Icons.search),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                  25.0,
+                    isWebScreen
+                        ? Container(
+                            width: width / 5,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextField(
+                                onChanged: (value) =>
+                                    filterSearchResults(value, context),
+                                decoration: const InputDecoration(
+                                  hintText: "Search by name",
+                                  prefixIcon: Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(
+                                        25.0,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
+                          )
+                        : const SizedBox.shrink(),
                   ],
                 ),
                 const SizedBox(
                   height: 10,
                 ),
+                !isWebScreen
+                    ? Container(
+                        height: 80,
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            onChanged: (value) =>
+                                filterSearchResults(value, context),
+                            decoration: const InputDecoration(
+                              hintText: "Search by name",
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(
+                                    25.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: (prov.usersList == null)
+                  child: (_foundUsers == null)
                       ? const Center(
                           child: Text("Loading..."),
                         )
@@ -385,7 +449,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               const Divider(),
                               ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: prov.usersList!.length,
+                                itemCount: _foundUsers!.length,
                                 itemBuilder: (context, index) {
                                   srNo = index + 1;
                                   return Column(
@@ -407,7 +471,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
                                                   textAlign: TextAlign.start,
-                                                  "${prov.usersList?[index]['name']}",
+                                                  "${_foundUsers?[index]['name']}",
                                                   style: GoogleFonts.poppins(
                                                     fontWeight: FontWeight.w500,
                                                   ),
@@ -420,7 +484,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
                                                   textAlign: TextAlign.start,
-                                                  "${prov.usersList?[index]['email']}",
+                                                  "${_foundUsers?[index]['email']}",
                                                   style: GoogleFonts.poppins(
                                                     fontWeight: FontWeight.w500,
                                                   ),
@@ -428,13 +492,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "${prov.usersList?[index]['licenceCode']}",
+                                              "${_foundUsers?[index]['licenceCode']}",
                                               style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                             Text(
-                                              "${prov.usersList?[index]['deviceLimit']}",
+                                              "${_foundUsers?[index]['deviceLimit']}",
                                               style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -444,7 +508,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                 ElevatedButton(
                                                   onPressed: () {
                                                     log(
-                                                      prov.usersList![index]
+                                                      _foundUsers![index]
                                                           ["name"],
                                                     );
                                                     showDialog<bool>(
@@ -465,16 +529,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                 ),
                                                 ElevatedButton(
                                                   onPressed: () {
-                                                    log(prov.usersList?[index]
+                                                    log(_foundUsers?[index]
                                                         ['uid']);
                                                     Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
                                                             AdminDetailsScreen(
-                                                          uid: prov.usersList?[
+                                                          uid: _foundUsers?[
                                                               index]['uid'],
-                                                          name: prov.usersList?[
+                                                          name: _foundUsers?[
                                                               index]['name'],
                                                         ),
                                                       ),
@@ -492,15 +556,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                             .deleteDataFromDatabase(
                                                       colName: "users",
                                                       userDoc:
-                                                          prov.usersList?[index]
+                                                          _foundUsers?[index]
                                                               ['uid'],
                                                     );
 
                                                     if (res) {
-                                                      Provider.of<RootProvider>(
-                                                              context,
-                                                              listen: false)
+                                                      await prov
                                                           .getAllUser(context);
+                                                      _foundUsers =
+                                                          prov.usersList;
                                                     }
                                                   },
                                                   icon: Icon(
@@ -514,7 +578,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                         ),
                                       ),
                                       (index <
-                                              prov.usersList!.length -
+                                              _foundUsers!.length -
                                                   1) // use list len here instead of static num
                                           ? const Divider()
                                           : const SizedBox.shrink()

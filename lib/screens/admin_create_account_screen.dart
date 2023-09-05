@@ -47,8 +47,8 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
       _firstNameController.clear();
       _lastNameController.clear();
       _passwordController.clear();
-      Provider.of<RootProvider>(context, listen: false).getAllUser(context);
-      Navigator.pop(context);
+      // Provider.of<RootProvider>(context, listen: false).getAllUser(context);
+      Navigator.pop(context, true);
     }
   }
 
