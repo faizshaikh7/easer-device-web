@@ -1,11 +1,10 @@
-// ignore_for_file: use_build_context_synchronously, unused_field
+// ignore_for_file: use_build_context_synchronously, unused_field, must_be_immutable
 
 import 'dart:developer';
 import 'package:device_activity_web/models/user_model.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
 import 'package:device_activity_web/utils/database/database_method.dart';
 import 'package:device_activity_web/utils/dimensions.dart';
-import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +35,7 @@ class _AdminDetailsScreenState extends State<AdminDetailsScreen> {
 
     Future.delayed(Duration.zero, () {
       updateData();
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           _isLoading = false;
         });
@@ -199,10 +198,10 @@ class _AdminDetailsScreenState extends State<AdminDetailsScreen> {
                     CircularProgressIndicator(
                       color: Colors.deepPurpleAccent.shade200,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
-                    Text("Loading..."),
+                    const Text("Loading..."),
                   ],
                 )
               : Column(
@@ -222,11 +221,11 @@ class _AdminDetailsScreenState extends State<AdminDetailsScreen> {
                     ),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.remove_red_eye,
                           color: Colors.grey,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Text(

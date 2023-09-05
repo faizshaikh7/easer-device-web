@@ -103,7 +103,6 @@ class RootProvider extends ChangeNotifier {
       }).then((value) {
         log("successfully added");
         setupValues();
-        Navigator.pop(context);
 
         log(user.licenceCode ?? "");
         log(user.name!);
@@ -170,9 +169,9 @@ class RootProvider extends ChangeNotifier {
                     "name": uName,
                   },
           )
-          .then((value) {
+          .then((value) async {
         customWidgets.showToast("User Updated");
-        Navigator.pop(context);
+        Navigator.of(context).pop();
       }).catchError((error) {
         print("Failed to update user: $error");
       });

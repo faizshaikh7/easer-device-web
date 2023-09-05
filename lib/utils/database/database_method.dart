@@ -20,4 +20,21 @@ class DatabaseMethods {
             .get())
         .data();
   }
+
+  Future<bool> deleteDataFromDatabase(
+      {String? colName, String? userDoc}) async {
+    return await FirebaseFirestore.instance
+        .collection(colName ?? "users")
+        .doc(userDoc)
+        .delete()
+        .then((value) {
+      print("User $userDoc Deleted");
+      return true;
+    }).catchError((error) {
+      print(
+        "Failed to delete user: $error",
+      );
+      return false;
+    });
+  }
 }

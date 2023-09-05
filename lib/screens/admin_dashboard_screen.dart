@@ -1,12 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 import 'dart:math' as mt;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_activity_web/screens/admin_details_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
+import 'package:device_activity_web/utils/database/database_method.dart';
 import 'package:device_activity_web/utils/dimensions.dart';
 import 'package:device_activity_web/widgets/custom_textfield.dart';
 import 'package:device_activity_web/widgets/custom_widget.dart';
 import 'package:device_activity_web/widgets/wsized.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +29,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   final TextEditingController _deviceLimitController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _deviceLimitController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -150,7 +163,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   _deviceLimitController.text);
 
               if (res) {
-                // TODO Add Code Here
+                Provider.of<RootProvider>(context, listen: false)
+                    .getAllUser(context);
+                prov.regenLicenceCode = null;
+                _nameController.clear();
+                _deviceLimitController.clear();
+                // setState(() {});
               }
             } else {
               customWidgets.showToast("All Fields Required");
@@ -161,15 +179,37 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
+  // getRealtimeUpdate() async {
+  //   var db = FirebaseFirestore.instance;
+
+  //   final docRef = db.collection("users");
+  //   docRef.snapshots().listen(
+  //     (event) async {
+  //       log("yes it works");
+  //       print("yes it works");
+  //     },
+  //     onError: (error) => log("Listen failed: $error"),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<RootProvider>(context);
     double width = MediaQuery.of(context).size.width;
+    TextEditingController editingController = TextEditingController();
+    // getRealtimeUpdate();
 
     bool isWebScreen = true;
     if (width <= webScreenSize) {
       setState(() {
         isWebScreen = false;
+      });
+    }
+
+    void filterSearchResults(String query) {
+      setState(() {
+        // items = prov.usersList.where((item) => item.toLowerCase().contains(query.toLowerCase()))
+        //     .toList();
       });
     }
 
@@ -206,12 +246,41 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                Text(
-                  "All Users",
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 30,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "All Users",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 30,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: width / 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          onChanged: (value) {
+                            filterSearchResults(value);
+                          },
+                          controller: editingController,
+                          decoration: const InputDecoration(
+                            hintText: "Search",
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(
+                                  25.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 10,
@@ -412,6 +481,32 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                     );
                                                   },
                                                   child: const Text("View"),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    var res =
+                                                        await DatabaseMethods()
+                                                            .deleteDataFromDatabase(
+                                                      colName: "users",
+                                                      userDoc:
+                                                          prov.usersList?[index]
+                                                              ['uid'],
+                                                    );
+
+                                                    if (res) {
+                                                      Provider.of<RootProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .getAllUser(context);
+                                                    }
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.delete_outlined,
+                                                    color: Colors.red.shade200,
+                                                  ),
                                                 )
                                               ],
                                             )

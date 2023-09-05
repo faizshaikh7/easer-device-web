@@ -38,13 +38,28 @@ class _AdminCreateAccountScreenState extends State<AdminCreateAccountScreen> {
     usr.password = password;
     usr.deviceLimit = deviceLimit;
 
-    var res = await Provider.of<RootProvider>(
-      context,
-      listen: false,
-    ).signUpWithEmailAndPassword(
-      context,
-      usr,
-    );
+    var res = await Provider.of<RootProvider>(context, listen: false)
+        .signUpWithEmailAndPassword(context, usr);
+
+    if (res) {
+      _deviceLimitController.clear();
+      _emailController.clear();
+      _firstNameController.clear();
+      _lastNameController.clear();
+      _passwordController.clear();
+      Provider.of<RootProvider>(context, listen: false).getAllUser(context);
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    _deviceLimitController.dispose();
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
