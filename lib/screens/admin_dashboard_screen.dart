@@ -3,7 +3,6 @@
 import 'dart:developer';
 import 'dart:math' as mt;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_activity_web/screens/admin_create_account_screen.dart';
 import 'package:device_activity_web/screens/admin_details_screen.dart';
 import 'package:device_activity_web/services/providers/root_provider.dart';
@@ -12,8 +11,6 @@ import 'package:device_activity_web/utils/dimensions.dart';
 import 'package:device_activity_web/widgets/custom_textfield.dart';
 import 'package:device_activity_web/widgets/custom_widget.dart';
 import 'package:device_activity_web/widgets/wsized.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -511,6 +508,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                       _foundUsers![index]
                                                           ["name"],
                                                     );
+                                                    _nameController.text =
+                                                        _foundUsers![index]
+                                                            ["name"];
+                                                    _deviceLimitController
+                                                            .text =
+                                                        _foundUsers![index]
+                                                            ["deviceLimit"];
+
                                                     showDialog<bool>(
                                                       context: context,
                                                       builder: (_) {
